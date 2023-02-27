@@ -4,15 +4,28 @@ from markupsafe import escape
 app = Flask(__name__)
 
 
+# Default route
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
 
 
-# Path parameter
+# Path parameter - default
 @app.route("/param/<name>")
 def hello(name):
     return f"Hello, {escape(name)}!"
+
+
+# Path parameter - specific type
+@app.route('/blog/<int:postID>')
+def show_blog(postID):
+    return 'Blog Number %d' % postID
+
+
+# Path parameter - specific type
+@app.route('/rev/<float:revNo>')
+def revision(revNo):
+    return 'Revision Number %f' % revNo
 
 
 # Stacking routes
@@ -23,7 +36,7 @@ def stacked(name=None):
     return f"Hello, {escape(name)}!"
 
 
-# Endpoint rule
+# Endpoint rule - Werkzeug
 from werkzeug.routing import Rule
 
 app.url_map.add(Rule('/custom', endpoint='custom'))
@@ -68,7 +81,6 @@ class Middleware:
 
 app.wsgi_app = Middleware(app.wsgi_app)
 
-# TODO
 # Blueprint, before_request_funcs
 api = Blueprint('my_blueprint', __name__)
 
@@ -77,10 +89,9 @@ def before_my_blueprint():
     print('runs before blueprint')  # kind of like before_request
 
 
-# TODO
-@api.route('/test')
+@api.route('/blueprint')
 def test():
-    return 'hi'
+    return 'Blueprint API'
 
 
 app.before_request_funcs = {
