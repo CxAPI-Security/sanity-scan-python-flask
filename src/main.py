@@ -29,7 +29,8 @@ def show_blog(post_id):
 # POST HTTP method
 @app.route('/user', methods=["POST"])
 def user():
-    password = request.json['password']  # sensitive data
+    password = request.json['password']
+    print('#DEBUG - Password is + ' + password)  # privacy violation
     return jsonify({'name': 'alice',
                     'email': 'alice@outlook.com',
                     'password': password})
