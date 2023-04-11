@@ -7,7 +7,7 @@ from werkzeug.routing import Rule
 app = Flask(__name__)
 
 
-# Default route
+# Default route (since no 'methods' were provided, will be represented as 2 APIs - GET and HEAD)
 @app.route("/")
 def hello_world():
     return "<p>Hello, World!</p>"
@@ -21,7 +21,7 @@ def hello(name):
 
 
 # Path parameter - specific type
-@app.route('/blog/<int:post_id>')
+@app.route('/blog/<int:post_id>', methods=["GET"])
 def show_blog(post_id):
     return 'Blog Number %d' % post_id
 
@@ -37,8 +37,8 @@ def user():
 
 
 # Stacking routes
-@app.route('/hello/')
-@app.route('/hello/<name>')
+@app.route('/stacked/', methods=["GET"])
+@app.route('/stacked/<name>', methods=["GET"])
 def stacked(name=None):
     name = name if name else "No name"
     return f"Hello, {escape(name)}!"
@@ -50,10 +50,10 @@ app.url_map.add(Rule('/custom', endpoint='custom'))
 
 @app.endpoint('custom')
 def my_index():
-    return "Hello custom"
+    return "Custom endpoint"
 
 
-# app ad durl rule
+# URL rule
 def extra():
     return 'Extra rule'
 
