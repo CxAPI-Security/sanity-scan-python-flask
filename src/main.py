@@ -17,15 +17,15 @@ def hello(name):
 
 
 # Path parameter - specific type
-@app.route('/blog/<int:postID>')
-def show_blog(postID):
-    return 'Blog Number %d' % postID
+@app.route('/blog/<int:post_id>')
+def show_blog(post_id):
+    return 'Blog Number %d' % post_id
 
 
 # Path parameter - specific type
-@app.route('/rev/<float:revNo>')
-def revision(revNo):
-    return 'Revision Number %f' % revNo
+@app.route('/rev/<float:rev_number>')
+def revision(rev_number):
+    return 'Revision Number %f' % rev_number
 
 
 # Stacking routes
