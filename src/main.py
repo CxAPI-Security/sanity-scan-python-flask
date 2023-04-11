@@ -14,7 +14,7 @@ def hello_world():
 
 
 # Path parameter - default
-@app.route("/param/<name>")
+@app.route("/param/<name>", methods=["GET"])
 def hello(name):
     subprocess.call("grep -R {} .".format(name), shell=True)  # command injection
     return f"Hello, {escape(name)}!"
