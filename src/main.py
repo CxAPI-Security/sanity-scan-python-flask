@@ -1,5 +1,8 @@
-from flask import Flask, Request, Blueprint
+import subprocess
+
+from flask import Flask, Blueprint, request, jsonify
 from markupsafe import escape
+from werkzeug.routing import Rule
 
 app = Flask(__name__)
 
@@ -13,6 +16,7 @@ def hello_world():
 # Path parameter - default
 @app.route("/param/<name>")
 def hello(name):
+    subprocess.call("grep -R {} .".format(name), shell=True)  # command injection
     return f"Hello, {escape(name)}!"
 
 
@@ -22,10 +26,13 @@ def show_blog(post_id):
     return 'Blog Number %d' % post_id
 
 
-# Path parameter - specific type
-@app.route('/rev/<float:rev_number>')
-def revision(rev_number):
-    return 'Revision Number %f' % rev_number
+# POST HTTP method
+@app.route('/user', methods=["POST"])
+def user():
+    password = request.json['password']  # sensitive data
+    return jsonify({'name': 'alice',
+                    'email': 'alice@outlook.com',
+                    'password': password})
 
 
 # Stacking routes
@@ -37,8 +44,6 @@ def stacked(name=None):
 
 
 # Endpoint rule - Werkzeug
-from werkzeug.routing import Rule
-
 app.url_map.add(Rule('/custom', endpoint='custom'))
 
 
@@ -56,30 +61,15 @@ app.add_url_rule('/extra', 'extra', extra)
 
 
 # Custom decorator
-def mydecorator(func):
+def my_decorator(func):
     app.add_url_rule('/mydec', func.__name__, func)
     return func()
 
 
-@mydecorator
-def mydecoratorexample():
+@my_decorator
+def my_decorator_example():
     return "<b>This should be bold</b>"
 
-
-# TODO
-# Custom middleware
-class Middleware:
-
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        request = Request(environ)
-        print('Custom middleware - path: %s, url: %s' % (request.path, request.url))
-        return self.app(environ, start_response)
-
-
-app.wsgi_app = Middleware(app.wsgi_app)
 
 # Blueprint, before_request_funcs
 api = Blueprint('my_blueprint', __name__)
