@@ -1,14 +1,10 @@
-## Description
+# Python Flask Sanity
+This project contains a **vulnerable** python application using flask do demonstrate Checkmarx' API Security solution.  
+**Security note: The application is vulnerable by design. Do not use it as reference for secured applications.**
 
-- Mainly using @app.route decorator.
-- app.url_map.add & @app.endpoint().
-- app.add_url_rule with a normal function.
-- Custom decorators.
-- @app.teardown_request/before_request
-- Custom Middleware class
-- before_request_funcs (Blueprint)
-
-### Development
-
-`. .venv/bin/activate`
-`flask --app src/main run`
+## Running
+```
+. .venv/bin/activate
+pip install -r requirements.txt
+python src/main.py
+```
