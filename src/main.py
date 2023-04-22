@@ -12,19 +12,19 @@ logging.basicConfig(filename='app.log', level=logging.INFO)
 
 
 # API with a basic route and function
-@app.route('/')
+@app.route('/', methods=['GET'])
 def hello_world():
     return 'Hello, World!'
 
 
 # API with route variables
-@app.route('/users/<username>')
+@app.route('/users/<username>', methods=['GET'])
 def show_user_profile(username):
     return f'User {username}'
 
 
 # API with query parameters
-@app.route('/query')
+@app.route('/query', methods=['GET'])
 def query_example():
     name = request.args.get('name')
     age = request.args.get('age')
@@ -40,14 +40,14 @@ def login():
 
 
 # API with a GET request and headers
-@app.route('/headers')
+@app.route('/headers', methods=['GET'])
 def headers():
     user_agent = request.headers.get('User-Agent')
     return f'User-Agent: {user_agent}'
 
 
 # API with custom error handling
-@app.route('/error')
+@app.route('/error', methods=['GET'])
 def error():
     abort(404)
 
@@ -73,27 +73,27 @@ def json_example():
 
 
 # API with cookies
-@app.route('/cookies')
+@app.route('/cookies', methods=['GET'])
 def cookies():
     username = request.cookies.get('username')
     return f'Username: {username}'
 
 
-@app.route('/setcookie')
-def setcookie():
+@app.route('/set_cookie', methods=['GET'])
+def set_cookie():
     resp = jsonify({'message': 'Cookie set'})
-    resp.set_cookie('username', 'flaskuser')
+    resp.set_cookie('username', 'flask_user')
     return resp
 
 
 # API with render_template
-@app.route('/template')
+@app.route('/template', methods=['GET'])
 def template():
     return render_template('index.html')
 
 
 # API with make_response
-@app.route('/response')
+@app.route('/response', methods=['GET'])
 def response():
     rsp = make_response('This is a response')
     rsp.headers['Content-Type'] = 'text/plain'
@@ -107,24 +107,25 @@ def redirect_example():
 
 
 # API with URL building
-@app.route('/url')
+@app.route('/url', methods=['GET'])
 def url():
     this_url = url_for('hello_world', _external=True)
     return f'The URL is {this_url}'
 
 
 # API with dynamic URL building
-@app.route('/user/<int:user_id>')
+@app.route('/user/<int:user_id>', methods=['GET'])
 def user_profile(user_id):
     return f'Profile page of user {user_id}'
 
 
 # API with route mapping
-@app.route('/projects/')
+@app.route('/projects/', methods=['GET'])
 def projects():
     return 'The project page'
 
 
+# API with route mapping, multiple HTTP methods (GET and HEAD)
 @app.route('/about')
 def about():
     return 'The about page'
@@ -146,7 +147,7 @@ def before_request():
     print('This is executed before each request.')
 
 
-@app.route('/before')
+@app.route('/before', methods=['GET'])
 def before():
     return 'This is a before_request example.'
 
@@ -158,7 +159,7 @@ def after_request(rsp):
     return rsp
 
 
-@app.route('/after')
+@app.route('/after', methods=['GET'])
 def after():
     return 'This is an after_request example.'
 
@@ -173,8 +174,8 @@ app.view_functions['hello_world_werkzeug'] = hello_world_werkzeug
 
 
 # Using Flask's stack method to define routes
-@app.route('/users')
-@app.route('/users/<username>')
+@app.route('/users', methods=['GET'])
+@app.route('/users/<username>', methods=['GET'])
 def show_user_profile_stacked(username=None):
     if username:
         return f'User {username}'
@@ -186,12 +187,12 @@ def show_user_profile_stacked(username=None):
 users_bp = Blueprint('users', __name__, url_prefix='/users')
 
 
-@users_bp.route('/')
+@users_bp.route('/', methods=['GET'])
 def users():
     return 'All users'
 
 
-@users_bp.route('/<username>')
+@users_bp.route('/<username>', methods=['GET'])
 def user_profile(username):
     return f'Profile page of user {username}'
 
@@ -200,7 +201,7 @@ app.register_blueprint(users_bp)
 
 
 # Command injection:
-@app.route('/ping')
+@app.route('/ping', methods=['GET'])
 def ping():
     ip = request.args.get('ip')
     rsp = os.system("ping -c 1 " + ip)
@@ -208,7 +209,7 @@ def ping():
 
 
 # SQL Injection
-@app.route('/user')
+@app.route('/user_vulnerable', methods=['GET'])
 def user():
     username = request.args.get('username')
     conn = sqlite3.connect(DATABASE)
