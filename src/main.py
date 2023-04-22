@@ -203,6 +203,17 @@ def user_profile(username):
 app.register_blueprint(users_bp)
 
 
+# Custom decorator
+def custom_decorator(func):
+    app.add_url_rule('/custom_decorator', func.__name__, func)
+    return func()
+
+
+@custom_decorator
+def my_decorator_example():
+    return "This is a custom decorator"
+
+
 # Command injection, reflected XSS
 @app.route('/ping', methods=['GET'])
 def ping():
