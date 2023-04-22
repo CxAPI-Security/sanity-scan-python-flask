@@ -1,3 +1,4 @@
 flask
 markupsafe
 uvicorn
+simpleencrypt

@@ -5,6 +5,7 @@ import sqlite3
 
 from flask import Flask, jsonify, request, render_template, make_response, abort, redirect, url_for, Blueprint
 from werkzeug.routing import Rule
+from simpleencrypt import aes256
 
 app = Flask(__name__, template_folder='templates')
 DATABASE = 'users.db'
@@ -23,7 +24,7 @@ def show_user_profile(username):
     return f'User {username}'
 
 
-# API with query parameters
+# API with query parameters, reflected XSS
 @app.route('/query', methods=['GET'])
 def query_example():
     name = request.args.get('name')
@@ -31,7 +32,7 @@ def query_example():
     return jsonify({'name': name, 'age': age})
 
 
-# API with a POST request and form data
+# API with a POST request and form data, reflected XSS, privacy violation
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
@@ -39,7 +40,7 @@ def login():
     return f'Username: {username}, Password: {password}'
 
 
-# API with a GET request and headers
+# API with a GET request and headers, reflected XSS
 @app.route('/headers', methods=['GET'])
 def headers():
     user_agent = request.headers.get('User-Agent')
@@ -57,7 +58,7 @@ def not_found_error(err):
     return jsonify({'error': 'Not found ' + err}), 404
 
 
-# API with file upload
+# API with file upload, reflected XSS
 @app.route('/upload', methods=['POST'])
 def upload_file():
     uploaded_file = request.files['file']
@@ -65,20 +66,21 @@ def upload_file():
     return f'File {uploaded_file.filename} uploaded successfully'
 
 
-# API with JSON data
+# API with JSON data, reflected XSS
 @app.route('/json', methods=['POST'])
 def json_example():
     data = request.get_json()
     return jsonify({'data': data})
 
 
-# API with cookies
+# API with cookies, reflected XSS
 @app.route('/cookies', methods=['GET'])
 def cookies():
     username = request.cookies.get('username')
     return f'Username: {username}'
 
 
+# Reflected XSS
 @app.route('/set_cookie', methods=['GET'])
 def set_cookie():
     resp = jsonify({'message': 'Cookie set'})
@@ -173,7 +175,7 @@ app.url_map.add(Rule('/', endpoint='hello_world_werkzeug', methods=['GET']))
 app.view_functions['hello_world_werkzeug'] = hello_world_werkzeug
 
 
-# Using Flask's stack method to define routes
+# Using Flask's stack method to define routes, reflected XSS
 @app.route('/users', methods=['GET'])
 @app.route('/users/<username>', methods=['GET'])
 def show_user_profile_stacked(username=None):
@@ -200,7 +202,7 @@ def user_profile(username):
 app.register_blueprint(users_bp)
 
 
-# Command injection:
+# Command injection, reflected XSS
 @app.route('/ping', methods=['GET'])
 def ping():
     ip = request.args.get('ip')
@@ -208,7 +210,7 @@ def ping():
     return "Ping response: " + str(rsp)
 
 
-# SQL Injection
+# SQL injection, stored XSS, parameter tampering
 @app.route('/user_vulnerable', methods=['GET'])
 def user():
     username = request.args.get('username')
@@ -236,7 +238,7 @@ def login_vulnerable():
 # Insecure randomness
 @app.route('/random_number', methods=['GET'])
 def random_number():
-    return str(random.randint(1, 10))
+    return aes256.encrypt('This is a secret', str(random.randint(1, 10)), str(random.randint(1, 10)))
 
 
 if __name__ == '__main__':
