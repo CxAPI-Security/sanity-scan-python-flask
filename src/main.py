@@ -7,6 +7,7 @@ from flask import Flask, jsonify, request, render_template, make_response, abort
 from werkzeug.routing import Rule
 from simpleencrypt import aes256
 
+# Missing HSTS header, CSRF
 app = Flask(__name__, template_folder='templates')
 DATABASE = 'users.db'
 logging.basicConfig(filename='app.log', level=logging.INFO)
@@ -18,7 +19,7 @@ def hello_world():
     return 'Hello, World!'
 
 
-# API with route variables
+# API with route variables, reflected XSS
 @app.route('/users/<username>', methods=['GET'])
 def show_user_profile(username):
     return f'User {username}'
@@ -103,7 +104,7 @@ def response():
 
 
 # API with redirect
-@app.route('/redirect')
+@app.route('/redirect', methods=['GET'])
 def redirect_example():
     return redirect(url_for('hello_world'))
 
@@ -133,7 +134,7 @@ def about():
     return 'The about page'
 
 
-@app.route('/<name>')
+@app.route('/<name>', methods=['GET'])
 def index(name):
     if name == 'projects':
         return redirect(url_for('projects'))
@@ -171,7 +172,7 @@ def hello_world_werkzeug(req):
     return 'Hello, werkzeug! ' + req.headers
 
 
-app.url_map.add(Rule('/', endpoint='hello_world_werkzeug', methods=['GET']))
+app.url_map.add(Rule('/hello_world_werkzeug', endpoint='hello_world_werkzeug', methods=['GET']))
 app.view_functions['hello_world_werkzeug'] = hello_world_werkzeug
 
 
@@ -186,7 +187,7 @@ def show_user_profile_stacked(username=None):
 
 
 # Using Flask's blueprint to group routes
-users_bp = Blueprint('users', __name__, url_prefix='/users')
+users_bp = Blueprint('bp_users', __name__, url_prefix='/bp_users')
 
 
 @users_bp.route('/', methods=['GET'])
@@ -194,7 +195,7 @@ def users():
     return 'All users'
 
 
-@users_bp.route('/<username>', methods=['GET'])
+@users_bp.route('/<bp_username>', methods=['GET'])
 def user_profile(username):
     return f'Profile page of user {username}'
 
