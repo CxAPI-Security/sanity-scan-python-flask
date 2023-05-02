@@ -177,13 +177,13 @@ app.view_functions['hello_world_werkzeug'] = hello_world_werkzeug
 
 
 # Using Flask's stack method to define routes, reflected XSS
-@app.route('/users_stacked', methods=['GET'])
-@app.route('/users_stacked/<username>', methods=['GET'])
-def show_user_profile_stacked(username=None):
-    if username:
-        return f'User {username}'
-    else:
-        return 'All users'
+# @app.route('/users_stacked', methods=['GET'])
+# @app.route('/users_stacked/<username>', methods=['GET'])
+# def show_user_profile_stacked(username=None):
+#     if username:
+#         return f'User {username}'
+#     else:
+#         return 'All users'
 
 
 # Using Flask's blueprint to group routes
