@@ -1,11 +1,11 @@
+import logging
 import os
 import random
-import logging
 import sqlite3
 
 from flask import Flask, jsonify, request, render_template, make_response, abort, redirect, url_for, Blueprint
-from werkzeug.routing import Rule
 from simpleencrypt import aes256
+from werkzeug.routing import Rule
 
 # Missing HSTS header, CSRF
 app = Flask(__name__, template_folder='templates')
