@@ -1,0 +1,777 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Flask API",
+		"version": "1.0.0",
+		"description": "This is a Flask API with basic routes"
+	},
+	"servers": [{
+		"url": "http://localhost:5000",
+		"description": "Local development server"
+	}],
+	"paths": {
+		"/": {
+			"get": {
+				"operationId": "hello_world",
+				"summary": "Get a greeting message",
+				"description": "Returns a greeting message",
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string",
+									"example": "Hello, World!"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/{username}": {
+			"get": {
+				"operationId": "show_user_profile",
+				"summary": "Get user profile",
+				"description": "Returns a user profile",
+				"parameters": [{
+					"name": "username",
+					"in": "path",
+					"description": "Username of the user to retrieve",
+					"required": true,
+					"schema": {
+						"type": "string",
+						"example": "john"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string",
+									"example": "User john"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/query": {
+			"get": {
+				"operationId": "query_example",
+				"summary": "Query example",
+				"description": "Returns a JSON object with query parameters",
+				"parameters": [{
+						"name": "name",
+						"in": "query",
+						"description": "Name of the user",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"example": "John"
+						}
+					},
+					{
+						"name": "age",
+						"in": "query",
+						"description": "Age of the user",
+						"required": false,
+						"schema": {
+							"type": "string",
+							"example": "25"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "object",
+									"properties": {
+										"name": {
+											"type": "string",
+											"example": "John"
+										},
+										"age": {
+											"type": "string",
+											"example": "25"
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/login": {
+			"post": {
+				"summary": "Login",
+				"description": "Logs a user in",
+				"requestBody": {
+					"description": "The user's login credentials",
+					"content": {
+						"application/x-www-form-urlencoded": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"username": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"username",
+									"password"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/headers": {
+			"get": {
+				"summary": "Get Headers",
+				"description": "Gets the user-agent header",
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/error": {
+			"get": {
+				"summary": "Error",
+				"description": "Returns a 404 error",
+				"responses": {
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Error"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/upload": {
+			"post": {
+				"summary": "Upload a file",
+				"requestBody": {
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "File uploaded successfully"
+					}
+				}
+			}
+		},
+		"/json": {
+			"post": {
+				"summary": "Send and receive JSON data",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/JsonData"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JsonData"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/cookies": {
+			"get": {
+				"summary": "Get the username from the cookie",
+				"responses": {
+					"200": {
+						"description": "Successful operation",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/set_cookie": {
+			"get": {
+				"summary": "Set a cookie with the username 'flask_user'",
+				"responses": {
+					"200": {
+						"description": "Successful operation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Message"
+								}
+							}
+						},
+						"headers": {
+							"Set-Cookie": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/template": {
+			"get": {
+				"summary": "API with render_template",
+				"description": "Returns a rendered HTML template.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"text/html": {}
+						}
+					}
+				}
+			}
+		},
+		"/response": {
+			"get": {
+				"summary": "API with make_response",
+				"description": "Returns a response object with a custom header.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"text/plain": {}
+						}
+					}
+				}
+			}
+		},
+		"/redirect": {
+			"get": {
+				"summary": "API with redirect",
+				"description": "Redirects to another API endpoint.",
+				"responses": {
+					"302": {
+						"description": "Found"
+					}
+				}
+			}
+		},
+		"/url": {
+			"get": {
+				"summary": "API with URL building",
+				"description": "Returns the URL of another API endpoint.",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"text/plain": {}
+						}
+					}
+				}
+			}
+		},
+		"/user/{user_id}": {
+			"get": {
+				"summary": "User Profile",
+				"description": "Get user profile by ID",
+				"parameters": [{
+					"name": "user_id",
+					"in": "path",
+					"description": "User ID",
+					"required": true,
+					"schema": {
+						"type": "integer",
+						"format": "int64"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "User not found",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/projects/": {
+			"get": {
+				"summary": "Projects",
+				"description": "Get the project page",
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/about": {
+			"get": {
+				"summary": "About",
+				"description": "Get the about page",
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/{name}": {
+			"get": {
+				"summary": "Index",
+				"description": "Redirect to projects or about page",
+				"parameters": [{
+					"name": "name",
+					"in": "path",
+					"description": "Page name",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"302": {
+						"description": "Successful redirection",
+						"headers": {
+							"Location": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Page not found",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/before": {
+			"get": {
+				"summary": "Before Request Example",
+				"description": "An API endpoint that executes a function before each request.",
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/after": {
+			"get": {
+				"summary": "After Request Example",
+				"description": "An API endpoint that executes a function after each request.",
+				"responses": {
+					"200": {
+						"description": "Successful response",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/hello_world_werkzeug": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "Hello, werkzeug! "
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users_stacked": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "All users"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users_stacked/{username}": {
+			"get": {
+				"parameters": [{
+					"name": "username",
+					"in": "path",
+					"required": true,
+					"description": "Username of the user",
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "User {username}"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users_bp": {
+			"get": {
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "All users"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users_bp/{username_bp}": {
+			"get": {
+				"parameters": [{
+					"name": "username_bp",
+					"in": "path",
+					"required": true,
+					"description": "Username of the user",
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "Profile page of user {username}"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/custom_decorator": {
+			"get": {
+				"tags": [
+					"Custom Decorator"
+				],
+				"summary": "Custom Decorator Endpoint",
+				"description": "Endpoint to showcase custom decorator implementation",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "This is a custom decorator"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/ping": {
+			"get": {
+				"tags": [
+					"Ping"
+				],
+				"summary": "Ping Endpoint",
+				"description": "Endpoint to check ping status",
+				"parameters": [{
+					"name": "ip",
+					"in": "query",
+					"description": "IP address to ping",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "Ping response: 0"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user_vulnerable": {
+			"get": {
+				"tags": [
+					"User"
+				],
+				"summary": "User Endpoint",
+				"description": "Endpoint to get user data",
+				"parameters": [{
+					"name": "username",
+					"in": "query",
+					"description": "Username to fetch user data",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}],
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "string",
+									"example": "{'id': '1', 'username': 'john'}"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/login_vulnerable": {
+			"post": {
+				"summary": "Perform login with vulnerable implementation",
+				"description": "This endpoint allows the user to log in with a vulnerable implementation",
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/x-www-form-urlencoded": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"username": {
+										"type": "string",
+										"description": "Username of the user"
+									},
+									"password": {
+										"type": "string",
+										"description": "Password of the user"
+									}
+								},
+								"required": ["username", "password"]
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Login successful"
+					},
+					"default": {
+						"description": "Login failed"
+					}
+				}
+			}
+		},
+		"/random_number": {
+			"get": {
+				"summary": "Generate a random number with insecure randomness",
+				"description": "This endpoint generates a random number with insecure randomness",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"text/plain": {
+								"schema": {
+									"type": "string",
+									"description": "Encrypted random number"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+	},
+	"components": {
+		"schemas": {
+			"Error": {
+				"type": "object",
+				"properties": {
+					"error": {
+						"type": "string"
+					}
+				}
+			},
+			"JsonData": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "object"
+					}
+				}
+			},
+			"Message": {
+				"type": "object",
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				}
+			}
+
+		},
+		"securitySchemes": {
+			"csrf_token": {
+				"type": "apiKey",
+				"name": "X-CSRF-TOKEN",
+				"in": "header"
+			},
+			"hsts": {
+				"type": "http",
+				"scheme": "https"
+			},
+			"BearerAuth": {
+				"type": "http",
+				"scheme": "bearer"
+			}
+		}
+	},
+	"security": [{
+		"csrf_token": [],
+		"hsts": [],
+		"BearerAuth": []
+	}]
+}
