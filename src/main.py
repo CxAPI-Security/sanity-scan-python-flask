@@ -177,30 +177,30 @@ app.view_functions['hello_world_werkzeug'] = hello_world_werkzeug
 
 
 # Using Flask's stack method to define routes, reflected XSS
-# @app.route('/users_stacked', methods=['GET'])
-# @app.route('/users_stacked/<username>', methods=['GET'])
-# def show_user_profile_stacked(username=None):
-#     if username:
-#         return f'User {username}'
-#     else:
-#         return 'All users'
+@app.route('/users_stacked', methods=['GET'])
+@app.route('/users_stacked/<username>', methods=['GET'])
+def show_user_profile_stacked(username=None):
+    if username:
+        return f'User {username}'
+    else:
+        return 'All users'
 
 
 # Using Flask's blueprint to group routes
-# users_bp = Blueprint('users_bp', __name__, url_prefix='/users_bp')
-#
-#
-# @users_bp.route('/', methods=['GET'])
-# def users():
-#     return 'All users'
-#
-#
-# @users_bp.route('/<username_bp>', methods=['GET'])
-# def user_profile(username):
-#     return f'Profile page of user {username}'
-#
-#
-# app.register_blueprint(users_bp)
+users_bp = Blueprint('users_bp', __name__, url_prefix='/users_bp')
+
+
+@users_bp.route('/', methods=['GET'])
+def users():
+    return 'All users'
+
+
+@users_bp.route('/<username_bp>', methods=['GET'])
+def user_profile(username):
+    return f'Profile page of user {username}'
+
+
+app.register_blueprint(users_bp)
 
 
 # Custom decorator
