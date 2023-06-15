@@ -7,6 +7,9 @@ from flask import Flask, jsonify, request, render_template, make_response, abort
 from simpleencrypt import aes256
 from werkzeug.routing import Rule
 
+# Total APIs - 31
+# Total APIs in api.json doc file - 30 (missing "/about" HEAD)
+
 # Missing HSTS header, CSRF
 app = Flask(__name__, template_folder='templates')
 DATABASE = 'users.db'
@@ -129,6 +132,7 @@ def projects():
 
 
 # API with route mapping, multiple HTTP methods (GET and HEAD)
+# HEAD option is missing from api.json documentation file
 @app.route('/about')
 def about():
     return 'The about page'
